@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.base import TransformerMixin,BaseEstimator
+from sklearn.decomposition import FastICA
 
 def get_time_series(dirpath, subjects, stimulus, scan, parcel,shafer):    
 
@@ -60,5 +61,19 @@ class MinMaxScaler3D(BaseEstimator,TransformerMixin):
         return self
 
     def transform(self,X):
-        return self.scaler.transform(X.reshape(X.shape[0], -1)).reshape(X.shape)    
+        return self.scaler.transform(X.reshape(X.shape[0], -1)).reshape(X.shape)
+    
+class FastICA3D(BaseEstimator,TransformerMixin):
+
+    def __init__(self,**kwargs):
+        self.ica = FastICA(**kwargs)
+
+    def fit(self,X,y=None):
+        self.ica.fit(X.reshape(X.shape[0], -1))
+        return self
+
+    def transform(self,X):
+        print(X.shape)
+        t = self.ica.transform(X.reshape(X.shape[0], -1))
+        return t    
 

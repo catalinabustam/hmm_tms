@@ -19,8 +19,8 @@ class HMM_classifier(BaseEstimator):
         X: input sequence [[[x1,x2,.., xn]...]]
         Y: output classes [1, 2, 1, ...
         """
-        print("Detect classes:", set(Y))
-        print("Prepare datasets...")
+        #print("Detect classes:", set(Y))
+        #print("Prepare datasets...")
         X_Y = {}
         X_lens = {}
 
@@ -33,7 +33,7 @@ class HMM_classifier(BaseEstimator):
             X_lens[y].append(len(x))
 
         for c in set(Y):
-            print("Fit HMM for", c, " class")
+            #print("Fit HMM for", c, " class")
             hmm_model = copy(self.hmm_model)
             hmm_model.n_components= self.n_components
             hmm_model.n_mix= self.n_mix 
@@ -88,6 +88,6 @@ class HMM_classifier(BaseEstimator):
         X: input sample [[x1,x2,.., xn]]
         """
         pred = self.predict_proba(X)
-        print(np.argmax(pred, axis=1))
+        #print(np.argmax(pred, axis=1))
 
         return np.argmax(pred, axis=1)
