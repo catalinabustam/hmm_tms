@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.base import TransformerMixin,BaseEstimator
-from sklearn.decomposition import FastICA
+from sklearn.decomposition import PCA
 
 def get_time_series(dirpath, subjects, stimulus, scan, parcel,shafer):    
 
@@ -39,41 +39,42 @@ def get_all_data(scans, stimuli,subjects, dirpath, parcel,schafer):
 
 #from https://stackoverflow.com/questions/50125844/how-to-standard-scale-a-3d-matrix
 
-class StandardScaler3D(BaseEstimator,TransformerMixin):
 
-    def __init__(self):
-        self.scaler = StandardScaler()
-
-    def fit(self,X,y=None):
-        self.scaler.fit(X.reshape(X.shape[0], -1))
+class StandardScaler3D(StandardScaler):
+        
+    def fit(self, X, y=None):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        super().fit(x, y=y)
         return self
-
-    def transform(self,X):
-        return self.scaler.transform(X.reshape(X.shape[0], -1)).reshape(X.shape)
     
-class MinMaxScaler3D(BaseEstimator,TransformerMixin):
-
-    def __init__(self):
-        self.scaler = MinMaxScaler()
-
-    def fit(self,X,y=None):
-        self.scaler.fit(X.reshape(X.shape[0], -1))
-        return self
-
-    def transform(self,X):
-        return self.scaler.transform(X.reshape(X.shape[0], -1)).reshape(X.shape)
+    def transform(self, X):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        return np.reshape(super().transform(x), newshape=X.shape)
     
-class FastICA3D(BaseEstimator,TransformerMixin):
 
-    def __init__(self,**kwargs):
-        self.ica = FastICA(**kwargs)
-
-    def fit(self,X,y=None):
-        self.ica.fit(X.reshape(X.shape[0], -1))
+class MinMaxScaler3D(MinMaxScaler):
+        
+    def fit(self, X, y=None):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        super().fit(x, y=y)
         return self
+    
+    def transform(self, X):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        return np.reshape(super().transform(x), newshape=X.shape)
+    
 
-    def transform(self,X):
-        print(X.shape)
-        t = self.ica.transform(X.reshape(X.shape[0], -1))
-        return t    
+class PCA3D(PCA):
 
+    def fit_transform(self, X, y=None):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        return np.reshape(super().fit_transform(x, y=y), newshape=(X.shape[0],X.shape[1],-1))
+    
+    def fit(self, X, y=None):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        super().fit(x, y=y)
+        return self
+    
+    def transform(self, X):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        return np.reshape(super().transform(x), newshape=(X.shape[0],X.shape[1],-1))
