@@ -7,7 +7,7 @@ from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 from sklearn.utils.multiclass import unique_labels
 
 
-class HMM_classifier(BaseEstimator):
+class HMM_classifier(BaseEstimator, ClassifierMixin):
     def __init__(self, hmm_model=None,n_components=None, n_mix=None):
         self.models = {}
         self.hmm_model = hmm_model
@@ -23,6 +23,8 @@ class HMM_classifier(BaseEstimator):
         #print("Prepare datasets...")
         X_Y = {}
         X_lens = {}
+        
+        self.classes_ = set(Y)
 
         for c in set(Y):
             X_Y[c] = []
@@ -91,3 +93,4 @@ class HMM_classifier(BaseEstimator):
         #print(np.argmax(pred, axis=1))
 
         return np.argmax(pred, axis=1)
+    

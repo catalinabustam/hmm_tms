@@ -4,6 +4,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.base import TransformerMixin,BaseEstimator
 from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
 
 def get_time_series(dirpath, subjects, stimulus, scan, parcel,shafer):    
 
@@ -78,3 +80,20 @@ class PCA3D(PCA):
     def transform(self, X):
         x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
         return np.reshape(super().transform(x), newshape=(X.shape[0],X.shape[1],-1))
+
+class LinearDiscriminantAnalysis3D(LinearDiscriminantAnalysis):
+
+    def fit_transform(self, X, y):
+        x=X
+        return np.reshape(super().fit_transform(x, y=y), newshape=(X.shape[0],X.shape[1],-1))
+    
+    def fit(self, X, y):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        y = np.array([list(y)]*X.shape[1]).T.flatten()
+        super().fit(x, y=y)
+        return self
+    
+    def transform(self, X):
+        x = np.reshape(X, newshape=(X.shape[0]*X.shape[1], X.shape[2]))
+        return np.reshape(super().transform(x), newshape=(X.shape[0],X.shape[1],-1))
+
